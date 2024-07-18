@@ -1,6 +1,6 @@
 export default function UserItem() {
     return (
-        <div className="flex">
+        <div className="flex items-center">
             <div className="rounded-full h-12 w-12 overflow-hidden">
                 <img
                     className="h-full w-full object-cover"
@@ -8,7 +8,7 @@ export default function UserItem() {
                     alt="Profile"
                 />
             </div>
-            <p>Trung Tran</p>
+            <p className="ml-4">Trung Tran</p>
         </div>
     );
 }
