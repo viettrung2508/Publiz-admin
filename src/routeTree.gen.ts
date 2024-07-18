@@ -19,7 +19,7 @@ import { Route as TagsIndexImport } from './routes/tags/index'
 import { Route as ReactionPackIndexImport } from './routes/reaction-pack/index'
 import { Route as PostsIndexImport } from './routes/posts/index'
 import { Route as OrganizationsIndexImport } from './routes/organizations/index'
-import { Route as MetasChemasIndexImport } from './routes/metas-chemas/index'
+import { Route as MetaSchemasIndexImport } from './routes/meta-schemas/index'
 import { Route as FilesIndexImport } from './routes/files/index'
 
 // Create/Update Routes
@@ -64,8 +64,8 @@ const OrganizationsIndexRoute = OrganizationsIndexImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
-const MetasChemasIndexRoute = MetasChemasIndexImport.update({
-  path: '/metas-chemas/',
+const MetaSchemasIndexRoute = MetaSchemasIndexImport.update({
+  path: '/meta-schemas/',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -99,11 +99,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof FilesIndexImport
       parentRoute: typeof rootRoute
     }
-    '/metas-chemas/': {
-      id: '/metas-chemas/'
-      path: '/metas-chemas'
-      fullPath: '/metas-chemas'
-      preLoaderRoute: typeof MetasChemasIndexImport
+    '/meta-schemas/': {
+      id: '/meta-schemas/'
+      path: '/meta-schemas'
+      fullPath: '/meta-schemas'
+      preLoaderRoute: typeof MetaSchemasIndexImport
       parentRoute: typeof rootRoute
     }
     '/organizations/': {
@@ -157,7 +157,7 @@ export const routeTree = rootRoute.addChildren({
   IndexRoute,
   JokesRoute,
   FilesIndexRoute,
-  MetasChemasIndexRoute,
+  MetaSchemasIndexRoute,
   OrganizationsIndexRoute,
   PostsIndexRoute,
   ReactionPackIndexRoute,
@@ -177,7 +177,7 @@ export const routeTree = rootRoute.addChildren({
         "/",
         "/jokes",
         "/files/",
-        "/metas-chemas/",
+        "/meta-schemas/",
         "/organizations/",
         "/posts/",
         "/reaction-pack/",
@@ -195,8 +195,8 @@ export const routeTree = rootRoute.addChildren({
     "/files/": {
       "filePath": "files/index.tsx"
     },
-    "/metas-chemas/": {
-      "filePath": "metas-chemas/index.tsx"
+    "/meta-schemas/": {
+      "filePath": "meta-schemas/index.tsx"
     },
     "/organizations/": {
       "filePath": "organizations/index.tsx"
