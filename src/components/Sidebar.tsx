@@ -41,7 +41,7 @@ export default function Sidebar() {
                     <span>Reaction Packs</span>
                 </div>
             </Link>
-            <Link to='/post'>
+            <Link to='/posts'>
                 <div className="flex pb-4">
                     <Newspaper className="mr-2" />
                     <span>Posts</span>
