@@ -13,6 +13,14 @@
 import { Route as rootRoute } from './routes/__root'
 import { Route as JokesImport } from './routes/jokes'
 import { Route as IndexImport } from './routes/index'
+import { Route as UsersIndexImport } from './routes/users/index'
+import { Route as TaxonomiesIndexImport } from './routes/taxonomies/index'
+import { Route as TagsIndexImport } from './routes/tags/index'
+import { Route as ReactionPackIndexImport } from './routes/reaction-pack/index'
+import { Route as PostsIndexImport } from './routes/posts/index'
+import { Route as OrganizationsIndexImport } from './routes/organizations/index'
+import { Route as MetasChemasIndexImport } from './routes/metas-chemas/index'
+import { Route as FilesIndexImport } from './routes/files/index'
 
 // Create/Update Routes
 
@@ -23,6 +31,46 @@ const JokesRoute = JokesImport.update({
 
 const IndexRoute = IndexImport.update({
   path: '/',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const UsersIndexRoute = UsersIndexImport.update({
+  path: '/users/',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const TaxonomiesIndexRoute = TaxonomiesIndexImport.update({
+  path: '/taxonomies/',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const TagsIndexRoute = TagsIndexImport.update({
+  path: '/tags/',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const ReactionPackIndexRoute = ReactionPackIndexImport.update({
+  path: '/reaction-pack/',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const PostsIndexRoute = PostsIndexImport.update({
+  path: '/posts/',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const OrganizationsIndexRoute = OrganizationsIndexImport.update({
+  path: '/organizations/',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const MetasChemasIndexRoute = MetasChemasIndexImport.update({
+  path: '/metas-chemas/',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const FilesIndexRoute = FilesIndexImport.update({
+  path: '/files/',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -44,12 +92,79 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof JokesImport
       parentRoute: typeof rootRoute
     }
+    '/files/': {
+      id: '/files/'
+      path: '/files'
+      fullPath: '/files'
+      preLoaderRoute: typeof FilesIndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/metas-chemas/': {
+      id: '/metas-chemas/'
+      path: '/metas-chemas'
+      fullPath: '/metas-chemas'
+      preLoaderRoute: typeof MetasChemasIndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/organizations/': {
+      id: '/organizations/'
+      path: '/organizations'
+      fullPath: '/organizations'
+      preLoaderRoute: typeof OrganizationsIndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/posts/': {
+      id: '/posts/'
+      path: '/posts'
+      fullPath: '/posts'
+      preLoaderRoute: typeof PostsIndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/reaction-pack/': {
+      id: '/reaction-pack/'
+      path: '/reaction-pack'
+      fullPath: '/reaction-pack'
+      preLoaderRoute: typeof ReactionPackIndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/tags/': {
+      id: '/tags/'
+      path: '/tags'
+      fullPath: '/tags'
+      preLoaderRoute: typeof TagsIndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/taxonomies/': {
+      id: '/taxonomies/'
+      path: '/taxonomies'
+      fullPath: '/taxonomies'
+      preLoaderRoute: typeof TaxonomiesIndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/users/': {
+      id: '/users/'
+      path: '/users'
+      fullPath: '/users'
+      preLoaderRoute: typeof UsersIndexImport
+      parentRoute: typeof rootRoute
+    }
   }
 }
 
 // Create and export the route tree
 
-export const routeTree = rootRoute.addChildren({ IndexRoute, JokesRoute })
+export const routeTree = rootRoute.addChildren({
+  IndexRoute,
+  JokesRoute,
+  FilesIndexRoute,
+  MetasChemasIndexRoute,
+  OrganizationsIndexRoute,
+  PostsIndexRoute,
+  ReactionPackIndexRoute,
+  TagsIndexRoute,
+  TaxonomiesIndexRoute,
+  UsersIndexRoute,
+})
 
 /* prettier-ignore-end */
 
@@ -60,7 +175,15 @@ export const routeTree = rootRoute.addChildren({ IndexRoute, JokesRoute })
       "filePath": "__root.tsx",
       "children": [
         "/",
-        "/jokes"
+        "/jokes",
+        "/files/",
+        "/metas-chemas/",
+        "/organizations/",
+        "/posts/",
+        "/reaction-pack/",
+        "/tags/",
+        "/taxonomies/",
+        "/users/"
       ]
     },
     "/": {
@@ -68,6 +191,30 @@ export const routeTree = rootRoute.addChildren({ IndexRoute, JokesRoute })
     },
     "/jokes": {
       "filePath": "jokes.tsx"
+    },
+    "/files/": {
+      "filePath": "files/index.tsx"
+    },
+    "/metas-chemas/": {
+      "filePath": "metas-chemas/index.tsx"
+    },
+    "/organizations/": {
+      "filePath": "organizations/index.tsx"
+    },
+    "/posts/": {
+      "filePath": "posts/index.tsx"
+    },
+    "/reaction-pack/": {
+      "filePath": "reaction-pack/index.tsx"
+    },
+    "/tags/": {
+      "filePath": "tags/index.tsx"
+    },
+    "/taxonomies/": {
+      "filePath": "taxonomies/index.tsx"
+    },
+    "/users/": {
+      "filePath": "users/index.tsx"
     }
   }
 }

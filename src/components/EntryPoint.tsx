@@ -6,12 +6,12 @@ import Sidebar from "./Sidebar";
 export const EntryPoint: React.FunctionComponent = () => {
 
   return (
-    <div className="w-full grid gird-cols-12 bg-neutral-800">
+    <div className="w-full grid grid-cols-12 bg-neutral-800">
       <Toaster />
-      <div className="col-span-1">
+      <div className="col-span-2">
         <Sidebar />
       </div>
-      <div className="col-span-11">
+      <div className="col-span-10">
         <Outlet />
         {/* <TanStackRouterDevtools />
         <ReactQueryDevtools /> */}
