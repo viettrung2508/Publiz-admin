@@ -5,14 +5,6 @@ import {
 } from "lucide-react"
 import * as React from "react"
 import { Drawer } from "vaul";
-import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from "@/components/ui/form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { DropdownMenuCheckboxItemProps } from "@radix-ui/react-dropdown-menu"
@@ -20,45 +12,64 @@ import {
     DropdownMenu,
     DropdownMenuCheckboxItem,
     DropdownMenuContent,
-
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Button } from '@/components/ui/button'
 import { z } from 'zod';
 import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
+import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
+import { CreateTaxonomyInput, createTaxonomy, getTaxonomies } from '@/api/publiz';
+import toast from "react-hot-toast";
+import { Label } from '@/components/ui/label';
+import { FormItem } from '@/components/ui/form';
+import { buildQueryOptions } from '@/lib/query';
+
 export const Route = createFileRoute('/taxonomies/')({
-    component: Taxonomies
+    component: Taxonomies,
+    loader: ({ context }) =>
+        context.queryClient.ensureQueryData(buildQueryOptions(getTaxonomies)),
 })
 
 type Checked = DropdownMenuCheckboxItemProps["checked"]
-const formSchema = z.object({
-    name: z.string().min(2, {
-        message: "Username must be at least 2 characters.",
-    }),
-    slug: z.string().min(2, {
-        message: "Username must be at least 2 characters.",
-    }),
-    description: z.string().min(2, {
-        message: "Username must be at least 2 characters.",
-    }),
-})
+type CreateTaxonomyFormSchema = z.infer<typeof createTaxonomySchema>;
+
+const createTaxonomySchema = z.object({
+    name: z.string().min(1).max(100),
+    slug: z.string().min(1).max(100),
+    // description: z.string().min(1),
+    type: z.enum(["SYSTEM", "DEFAULT"]),
+    organizationId: z.number(),
+    userId: z.number(),
+});
 function Taxonomies() {
-    const form = useForm<z.infer<typeof formSchema>>({
-        resolver: zodResolver(formSchema),
-        defaultValues: {
-            name: "",
-            slug: "",
-            description: "",
+    const {
+        data: { data: taxonomies = [] },
+    } = useSuspenseQuery(buildQueryOptions(getTaxonomies));
+    const {
+        register,
+        handleSubmit,
+        formState: { isValid, errors },
+    } = useForm<CreateTaxonomyFormSchema>({
+        mode: "onBlur",
+        resolver: zodResolver(createTaxonomySchema),
+    });
+
+    const mutation = useMutation({
+        mutationFn: (input: CreateTaxonomyInput) => {
+            return createTaxonomy(input);
         },
-    })
-    function onSubmit(values: z.infer<typeof formSchema>) {
-        // Do something with the form values.
-        // ✅ This will be type-safe and validated.
-        console.log(values)
-    }
-    const [showStatusBar, setShowStatusBar] = React.useState<Checked>(true)
-    const [showActivityBar, setShowActivityBar] = React.useState<Checked>(false)
+    });
+    const onSubmit = (data: CreateTaxonomyFormSchema) =>
+        mutation.mutate(data, {
+            onSuccess: async () => {
+                toast.success("Taxonomy created");
+            },
+            onError: (errors) => {
+                console.error(errors);
+                toast.error("Tag could not be created");
+            },
+        });
+    const [showDefault, setShowDefault] = React.useState<Checked>(true)
     const [showPanel, setShowPanel] = React.useState<Checked>(false)
     return (
         <div className='text-white w-2/6 mx-auto pt-8'>
@@ -78,54 +89,26 @@ function Taxonomies() {
                                     <Drawer.Title className="font-medium mb-4">
                                         Create a new taxonomy
                                     </Drawer.Title>
-                                    <Form {...form}>
-                                        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 ">
-                                            <div>
-                                                <FormField
-                                                    control={form.control}
-                                                    name="name"
-                                                    render={({ field }) => (
-                                                        <FormItem>
-                                                            <FormLabel>Name</FormLabel>
-                                                            <FormControl>
-                                                                <Input className='bg-zinc-700 border-zinc-700'  {...field} />
-                                                            </FormControl>
-                                                            <FormMessage />
-                                                        </FormItem>
-                                                    )}
-                                                />
-                                                <FormField
-                                                    control={form.control}
-                                                    name="slug"
-                                                    render={({ field }) => (
-                                                        <FormItem>
-                                                            <FormLabel>Slug</FormLabel>
-                                                            <FormControl>
-                                                                <Input className='bg-zinc-700 border-zinc-700' {...field} />
-                                                            </FormControl>
-                                                            <FormMessage />
-                                                        </FormItem>
-                                                    )}
-                                                />
-                                                <FormField
-                                                    control={form.control}
-                                                    name="description"
-                                                    render={({ field }) => (
-                                                        <FormItem>
-                                                            <FormLabel>Description</FormLabel>
-                                                            <FormControl>
-                                                                <Textarea className='bg-zinc-700 border border-zinc-700' {...field} />
-                                                            </FormControl>
-                                                            <FormMessage />
-                                                        </FormItem>
-                                                    )}
-                                                />
-                                            </div>
-                                            <div>
-                                                <Button type="submit" className='bg-yellow-400 text-black'>Save</Button>
-                                            </div>
-                                        </form>
-                                    </Form>
+                                    <form onSubmit={handleSubmit(onSubmit)} className="space-y-3">
+                                        <FormItem>
+                                            <Label>Name</Label>
+                                            <Input type="text" {...register("name")} className='text-black' />
+                                            {errors.name && <p className="text-red-500">{errors.name.message}</p>}
+                                        </FormItem>
+                                        <FormItem>
+                                            <Label>Slug</Label>
+                                            <Input type="text" {...register("slug")} className='text-black' />
+                                            {errors.slug && <p className="text-red-500">{errors.slug.message}</p>}
+                                        </FormItem>
+                                        {/* <FormItem>
+                                            <Label>Description</Label>
+                                            <Textarea type="text" {...register("description")} />
+                                            {errors.description && <p className="text-red-500">{errors.description.message}</p>}
+                                        </FormItem> */}
+                                        <Button type="submit" className="w-full" disabled={!isValid}>
+                                            Save
+                                        </Button>
+                                    </form>
                                 </div>
                             </div>
                         </Drawer.Content>
@@ -143,18 +126,12 @@ function Taxonomies() {
                     </DropdownMenuTrigger>
                     <DropdownMenuContent className="w-56">
                         <DropdownMenuCheckboxItem
-                            checked={showStatusBar}
-                            onCheckedChange={setShowStatusBar}
+                            checked={showDefault}
+                            onCheckedChange={setShowDefault}
                         >
-                            Status Bar
+                            Default
                         </DropdownMenuCheckboxItem>
-                        <DropdownMenuCheckboxItem
-                            checked={showActivityBar}
-                            onCheckedChange={setShowActivityBar}
-                            disabled
-                        >
-                            Activity Bar
-                        </DropdownMenuCheckboxItem>
+
                         <DropdownMenuCheckboxItem
                             checked={showPanel}
                             onCheckedChange={setShowPanel}
@@ -165,51 +142,16 @@ function Taxonomies() {
                 </DropdownMenu>
             </div>
             <div className='bg-gray-600 p-4 rounded-lg'>
-                <div className='flex justify-between pb-4'>
-                    <div>
-                        <h1 className='pb-2'>Blog post</h1>
-                        <p>Use for the blog post content</p>
+                {taxonomies.map((taxonomies) => (
+                    <div key={taxonomies.id} className='flex justify-between pb-4'>
+                        <div>
+                            <h1 className='pb-2'>{taxonomies.name}</h1>
+                        </div>
+                        <div>
+                            <p className='bg-yellow-400 p-1 rounded-2xl text-xs'>{taxonomies.slug}</p>
+                        </div>
                     </div>
-                    <div>
-                        <p className='bg-yellow-400 p-1 rounded-2xl text-xs'>blog_post</p>
-                    </div>
-                </div>
-                <div className='flex justify-between pb-4'>
-                    <div>
-                        <h1 className='pb-2'>Story</h1>
-                        <p>Use for the quick story content</p>
-                    </div>
-                    <div>
-                        <p className='bg-yellow-400 p-1 rounded-2xl text-xs'>story</p>
-                    </div>
-                </div>
-                <div className='flex justify-between pb-4'>
-                    <div>
-                        <h1 className='pb-2'>Product</h1>
-                        <p>Use for the selling product</p>
-                    </div>
-                    <div>
-                        <p className='bg-yellow-400 p-1 rounded-2xl text-xs'>product</p>
-                    </div>
-                </div>
-                <div className='flex justify-between pb-4'>
-                    <div>
-                        <h1 className='pb-2'>Job</h1>
-                        <p>Use for the job listing item</p>
-                    </div>
-                    <div>
-                        <p className='bg-yellow-400 p-1 rounded-2xl text-xs'>job</p>
-                    </div>
-                </div>
-                <div className='flex justify-between '>
-                    <div>
-                        <h1 className='pb-2'>Forum post</h1>
-                        <p>Use for the forum post content</p>
-                    </div>
-                    <div>
-                        <p className='bg-yellow-400 p-1 rounded-2xl text-xs'>story</p>
-                    </div>
-                </div>
+                ))}
             </div>
         </div>
     )
