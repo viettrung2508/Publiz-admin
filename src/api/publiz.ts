@@ -30,7 +30,7 @@ export const publizClient = ky.extend({
 });
 
 export const getMyProfile = () =>
-  publizClient.get("api/v1/users/my_profile").json<BaseResponse<User>>();
+  publizClient.get("https://publiz-techgoda.hieutran-fu7532.workers.dev/api/v1/users/my_profile").json<BaseResponse<User>>();
 
 
 
