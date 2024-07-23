@@ -6,9 +6,7 @@ import {
 import * as React from "react"
 import {
     Drawer,
-    DrawerClose,
     DrawerContent,
-    DrawerDescription,
     DrawerFooter,
     DrawerHeader,
     DrawerTitle,
@@ -23,13 +21,65 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Button } from '@/components/ui/button'
+import { buildQueryOptions } from '@/lib/query'
+import { CreateTagInput, createTag, getTags } from '@/api/publiz'
+import { Controller, useForm } from 'react-hook-form'
+import { useMutation, useSuspenseQuery } from '@tanstack/react-query'
+import { zodResolver } from '@hookform/resolvers/zod'
+import toast from 'react-hot-toast'
+import { FormItem } from '@/components/ui/form'
+import { Label } from '@/components/ui/label'
+import { Input } from '@/components/ui/input'
+
+import { z } from 'zod'
+import { Select, SelectContent, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { SelectItem } from '@radix-ui/react-select'
 export const Route = createFileRoute('/tags/')({
-    component: Tags
+    component: Tags,
+    loader: ({ context }) =>
+        context.queryClient.ensureQueryData(buildQueryOptions(getTags)),
 })
+const createTagSchema = z.object({
+    name: z.string().min(1).max(100),
+    slug: z.string().min(1).max(100),
+    type: z.enum(["SYSTEM", "DEFAULT"]),
+    organizationId: z.number(),
+    userId: z.number(),
+
+});
 
 type Checked = DropdownMenuCheckboxItemProps["checked"]
+type CreateTagFormSchema = z.infer<typeof createTagSchema>;
 
 function Tags() {
+    const {
+        data: { data: tags = [] },
+    } = useSuspenseQuery(buildQueryOptions(getTags));
+    const {
+        register,
+        handleSubmit,
+        control,
+        formState: { isValid, errors },
+    } = useForm<CreateTagFormSchema>({
+        mode: "onBlur",
+        resolver: zodResolver(createTagSchema),
+    });
+
+    const mutation = useMutation({
+        mutationFn: (input: CreateTagInput) => {
+            return createTag(input);
+        },
+    });
+    const onSubmit = (data: CreateTagFormSchema) =>
+        mutation.mutate(data, {
+            onSuccess: async () => {
+                toast.success("Tag created");
+            },
+            onError: (errors) => {
+                console.error(errors);
+                toast.error("Tag could not be created");
+            },
+        });
     const [showStatusBar, setShowStatusBar] = React.useState<Checked>(true)
     const [showActivityBar, setShowActivityBar] = React.useState<Checked>(false)
     const [showPanel, setShowPanel] = React.useState<Checked>(false)
@@ -44,17 +94,47 @@ function Tags() {
                     <DrawerContent>
                         <DrawerHeader>
                             <DrawerTitle>Are you absolutely sure?</DrawerTitle>
-                            <DrawerDescription>This action cannot be undone.</DrawerDescription>
                         </DrawerHeader>
                         <DrawerFooter>
-                            <Button>Submit</Button>
-                            <DrawerClose>
-                                <Button variant="outline">Cancel</Button>
-                            </DrawerClose>
+                            <form onSubmit={handleSubmit(onSubmit)} className="space-y-3">
+                                <FormItem>
+                                    <Label>Name</Label>
+                                    <Input type="text" {...register("name")} />
+                                    {errors.name && <p className="text-red-500">{errors.name.message}</p>}
+                                </FormItem>
+                                <FormItem>
+                                    <Label>Slug</Label>
+                                    <Input type="text" {...register("slug")} />
+                                    {errors.slug && <p className="text-red-500">{errors.slug.message}</p>}
+                                </FormItem>
+                                <Controller
+                                    name="type"
+                                    control={control}
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <Label>Taxonomy</Label>
+                                            <Select value={field.value} onValueChange={field.onChange}>
+                                                <SelectTrigger>
+                                                    <SelectValue placeholder="Type" />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    <SelectItem value="DEFAULT">1</SelectItem>
+                                                    <SelectItem value="SYSTEM">2</SelectItem>
+                                                </SelectContent>
+                                            </Select>
+                                            {errors.type && (
+                                                <p className="text-red-500">{errors.type.message}</p>
+                                            )}
+                                        </FormItem>
+                                    )}
+                                ></Controller>
+                                <Button type="submit" className="w-full" disabled={!isValid}>
+                                    Create
+                                </Button>
+                            </form>
                         </DrawerFooter>
                     </DrawerContent>
                 </Drawer>
-
             </div>
             <div className='pt-6 pb-8 flex'>
                 <DropdownMenu>
@@ -146,107 +226,19 @@ function Tags() {
                 </DropdownMenu>
             </div>
             <h1 className='uppercase pb-4'>Forum</h1>
-            <div className='bg-gray-600 p-4 rounded-lg'>
-                <div className='flex justify-between pb-4'>
-                    <div>
-                        <h1 className='pb-2'>Golang</h1>
+            <div className='bg-zinc-700 p-4 rounded-lg'>
+                {tags.map((tag) => (
+                    <div key={tag.id} className='flex justify-between pb-4'>
+                        <div>
+                            <h1 className='pb-2'>{tag.name}</h1>
+                        </div>
+                        <div>
+                            <p className='bg-yellow-400 p-1 rounded-2xl text-xs'>{tag.slug}</p>
+                        </div>
                     </div>
-                    <div>
-                        <p className='bg-yellow-400 p-1 rounded-2xl text-xs'>golang</p>
-                    </div>
-                </div>
-                <div className='flex justify-between pb-4'>
-                    <div>
-                        <h1 className='pb-2'>Javascript</h1>
-                    </div>
-                    <div>
-                        <p className='bg-yellow-400 p-1 rounded-2xl text-xs'>javascript</p>
-                    </div>
-                </div>
-                <div className='flex justify-between pb-4'>
-                    <div>
-                        <h1 className='pb-2'>Kubernetes</h1>
-                    </div>
-                    <div>
-                        <p className='bg-yellow-400 p-1 rounded-2xl text-xs'>Kubernetes</p>
-                    </div>
-                </div>
-                <div className='flex justify-between pb-4'>
-                    <div>
-                        <h1 className='pb-2'>React Native</h1>
-                    </div>
-                    <div>
-                        <p className='bg-yellow-400 p-1 rounded-2xl text-xs'>react-native</p>
-                    </div>
-                </div>
-                <div className='flex justify-between '>
-                    <div>
-                        <h1 className='pb-2'>Agile</h1>
-                    </div>
-                    <div>
-                        <p className='bg-yellow-400 p-1 rounded-2xl text-xs'>agile</p>
-                    </div>
-                </div>
-                <div className='flex justify-between '>
-                    <div>
-                        <h1 className='pb-2'>Software Engineering</h1>
-                    </div>
-                    <div>
-                        <p className='bg-yellow-400 p-1 rounded-2xl text-xs'>software-engineering</p>
-                    </div>
-                </div>
+                ))}
             </div>
-            <h1 className='uppercase py-4'>Job</h1>
-            <div className='bg-gray-600 p-4 rounded-lg'>
-                <div className='flex justify-between pb-4'>
-                    <div>
-                        <h1 className='pb-2'>Front end</h1>
-                    </div>
-                    <div>
-                        <p className='bg-yellow-400 p-1 rounded-2xl text-xs'>front-end</p>
-                    </div>
-                </div>
-                <div className='flex justify-between pb-4'>
-                    <div>
-                        <h1 className='pb-2'>Back end</h1>
-                    </div>
-                    <div>
-                        <p className='bg-yellow-400 p-1 rounded-2xl text-xs'>Back end</p>
-                    </div>
-                </div>
-                <div className='flex justify-between pb-4'>
-                    <div>
-                        <h1 className='pb-2'>DevOps</h1>
-                    </div>
-                    <div>
-                        <p className='bg-yellow-400 p-1 rounded-2xl text-xs'>devops</p>
-                    </div>
-                </div>
-                <div className='flex justify-between pb-4'>
-                    <div>
-                        <h1 className='pb-2'>UI/UX Design</h1>
-                    </div>
-                    <div>
-                        <p className='bg-yellow-400 p-1 rounded-2xl text-xs'>ui-ux-design</p>
-                    </div>
-                </div>
-                <div className='flex justify-between '>
-                    <div>
-                        <h1 className='pb-2'>Business Analyst</h1>
-                    </div>
-                    <div>
-                        <p className='bg-yellow-400 p-1 rounded-2xl text-xs'>business-analyst</p>
-                    </div>
-                </div>
-                <div className='flex justify-between '>
-                    <div>
-                        <h1 className='pb-2'>Quality Assurance</h1>
-                    </div>
-                    <div>
-                        <p className='bg-yellow-400 p-1 rounded-2xl text-xs'>quality-assurance</p>
-                    </div>
-                </div>
-            </div>
+
         </div>
     )
 }
