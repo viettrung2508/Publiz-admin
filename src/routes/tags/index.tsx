@@ -86,7 +86,7 @@ function Tags() {
     return (
         <div className='text-white w-2/6 mx-auto pt-8'>
             <div className='flex justify-between'>
-                <h1>Tags</h1>
+                <h1 className='text-lg'>Tags</h1>
                 <Drawer direction='right'>
                     <DrawerTrigger>
                         <Plus />
@@ -140,7 +140,7 @@ function Tags() {
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                         <div className='flex '>
-                            <span>System</span>
+                            <span className='text-base'>System</span>
                             <ChevronDown className='ml-4' />
                         </div>
                     </DropdownMenuTrigger>
@@ -169,7 +169,7 @@ function Tags() {
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                         <div className='flex '>
-                            <span>Taxonomy</span>
+                            <span className='text-base'>Taxonomy</span>
                             <ChevronDown className='ml-4' />
                         </div>
                     </DropdownMenuTrigger>
@@ -198,7 +198,7 @@ function Tags() {
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                         <div className='flex '>
-                            <span>Organization</span>
+                            <span className='text-base'>Organization</span>
                             <ChevronDown className='ml-4' />
                         </div>
                     </DropdownMenuTrigger>
@@ -225,15 +225,15 @@ function Tags() {
                     </DropdownMenuContent>
                 </DropdownMenu>
             </div>
-            <h1 className='uppercase pb-4'>Forum</h1>
+            <h1 className='uppercase pb-4 text-sm'>Forum</h1>
             <div className='bg-zinc-700 p-4 rounded-lg'>
                 {tags.map((tag) => (
                     <div key={tag.id} className='flex justify-between pb-4'>
                         <div>
-                            <h1 className='pb-2'>{tag.name}</h1>
+                            <h1 className='pb-2 text-base'>{tag.name}</h1>
                         </div>
                         <div>
-                            <p className='bg-yellow-400 p-1 rounded-2xl text-xs'>{tag.slug}</p>
+                            <p className='bg-[#FFCE31] p-1 rounded-2xl text-xs text-[#77611B]'>{tag.slug}</p>
                         </div>
                     </div>
                 ))}
