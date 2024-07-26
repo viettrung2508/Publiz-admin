@@ -4,7 +4,6 @@ import { useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import z from "zod";
 
-
 const signInSchema = z.object({
   email: z.string().email(),
   password: z.string().min(6),

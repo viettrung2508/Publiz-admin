@@ -12,6 +12,31 @@ export type User = {
   coverUrl?: string;
 };
 export type TagType = "SYSTEM" | "DEFAULT";
+export type Taxonomy = {
+  id: number;
+  name: string;
+  slug: string;
+  type: TagType;
+  organizationId?: number;
+  userId: number;
+};
+export type CreateTaxonomyInput = {
+  name: string;
+  slug: string;
+  type: TagType;
+  organizationId?: number;
+  userId: number;
+};
+export const getTaxonomies = () =>
+  publizClient.get("https://publiz-techgoda.hieutran-fu7532.workers.dev/api/v1/taxonomies").json<BaseResponse<Taxonomy[]>>();
+
+export const createTaxonomy = (input: CreateTaxonomyInput) => {
+  return publizClient
+    .post("https://publiz-techgoda.hieutran-fu7532.workers.dev/admin/api/v1/taxonomies", { json: input })
+    .json<BaseResponse<Taxonomy>>();
+};
+
+
 export type Tag = {
   id: number;
   name: string;
@@ -21,19 +46,11 @@ export type Tag = {
   userId: number;
   taxonomyId: number;
 };
-export type Taxonomy = {
-  id: number;
-  name: string;
-  slug: string;
-  type: TagType;
-  organizationId?: number;
-  userId: number;
-};
+
 export const getTags = () =>
   publizClient.get("https://publiz-techgoda.hieutran-fu7532.workers.dev/api/v1/tags").json<BaseResponse<Tag[]>>();
 
-export const getTaxonomies = () =>
-  publizClient.get("https://publiz-techgoda.hieutran-fu7532.workers.dev/api/v1/taxonomies").json<BaseResponse<Taxonomy[]>>();
+
 export type CreateTagInput = {
   name: string;
   slug: string;
