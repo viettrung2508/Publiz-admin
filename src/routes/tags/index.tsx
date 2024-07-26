@@ -4,25 +4,17 @@ import {
     ChevronDown,
 } from "lucide-react"
 import * as React from "react"
-import {
-    Drawer,
-    DrawerContent,
-    DrawerFooter,
-    DrawerHeader,
-    DrawerTitle,
-    DrawerTrigger,
-} from "@/components/ui/drawer"
 import { DropdownMenuCheckboxItemProps } from "@radix-ui/react-dropdown-menu"
 import {
     DropdownMenu,
     DropdownMenuCheckboxItem,
     DropdownMenuContent,
-
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { Drawer } from "vaul";
 import { Button } from '@/components/ui/button'
 import { buildQueryOptions } from '@/lib/query'
-import { CreateTagInput, createTag, getTags } from '@/api/publiz'
+import { CreateTagInput, createTag, getTags, getTaxonomies } from '@/api/publiz'
 import { Controller, useForm } from 'react-hook-form'
 import { useMutation, useSuspenseQuery } from '@tanstack/react-query'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -30,14 +22,22 @@ import toast from 'react-hot-toast'
 import { FormItem } from '@/components/ui/form'
 import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
-
 import { z } from 'zod'
 import { Select, SelectContent, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { SelectItem } from '@radix-ui/react-select'
 export const Route = createFileRoute('/tags/')({
     component: Tags,
-    loader: ({ context }) =>
-        context.queryClient.ensureQueryData(buildQueryOptions(getTags)),
+    loader: async ({ context }) => {
+        const { queryClient } = context;
+        const tagsDataPromise = queryClient.ensureQueryData(buildQueryOptions(getTags));
+        const taxonomiesDataPromise = queryClient.ensureQueryData(buildQueryOptions(getTaxonomies));
+        const [tagsData, taxonomiesData] = await Promise.all([tagsDataPromise, taxonomiesDataPromise]);
+        return {
+            tagsData,
+            taxonomiesData,
+        };
+    }
+
 })
 const createTagSchema = z.object({
     name: z.string().min(1).max(100),
@@ -45,9 +45,8 @@ const createTagSchema = z.object({
     type: z.enum(["SYSTEM", "DEFAULT"]),
     organizationId: z.number(),
     userId: z.number(),
-
+    taxonomyId: z.number(),
 });
-
 type Checked = DropdownMenuCheckboxItemProps["checked"]
 type CreateTagFormSchema = z.infer<typeof createTagSchema>;
 
@@ -87,54 +86,62 @@ function Tags() {
         <div className='text-white w-2/6 mx-auto pt-8'>
             <div className='flex justify-between'>
                 <h1 className='text-lg'>Tags</h1>
-                <Drawer direction='right'>
-                    <DrawerTrigger>
-                        <Plus />
-                    </DrawerTrigger>
-                    <DrawerContent>
-                        <DrawerHeader>
-                            <DrawerTitle>Are you absolutely sure?</DrawerTitle>
-                        </DrawerHeader>
-                        <DrawerFooter>
-                            <form onSubmit={handleSubmit(onSubmit)} className="space-y-3">
-                                <FormItem>
-                                    <Label>Name</Label>
-                                    <Input type="text" {...register("name")} />
-                                    {errors.name && <p className="text-red-500">{errors.name.message}</p>}
-                                </FormItem>
-                                <FormItem>
-                                    <Label>Slug</Label>
-                                    <Input type="text" {...register("slug")} />
-                                    {errors.slug && <p className="text-red-500">{errors.slug.message}</p>}
-                                </FormItem>
-                                <Controller
-                                    name="type"
-                                    control={control}
-                                    render={({ field }) => (
+                <Drawer.Root direction="right" >
+                    <Drawer.Trigger asChild>
+                        <button>
+                            <Plus />
+                        </button>
+                    </Drawer.Trigger>
+                    <Drawer.Portal>
+                        <Drawer.Overlay className="fixed inset-0 bg-black/70" />
+                        <Drawer.Content className="bg-white flex flex-col rounded-t-[10px] h-full w-[400px] mt-24 fixed bottom-0 right-0">
+                            <div className="p-4 text-white bg-zinc-800 border  border-neutral-700 border-y-0 border-l-2 flex-1 h-full">
+                                <div className="max-w-md mx-auto">
+                                    <Drawer.Title className="font-medium mb-4">
+                                        Create a new taxonomy
+                                    </Drawer.Title>
+                                    <form onSubmit={handleSubmit(onSubmit)} className="space-y-3">
                                         <FormItem>
-                                            <Label>Taxonomy</Label>
-                                            <Select value={field.value} onValueChange={field.onChange}>
-                                                <SelectTrigger>
-                                                    <SelectValue placeholder="Type" />
-                                                </SelectTrigger>
-                                                <SelectContent>
-                                                    <SelectItem value="DEFAULT">1</SelectItem>
-                                                    <SelectItem value="SYSTEM">2</SelectItem>
-                                                </SelectContent>
-                                            </Select>
-                                            {errors.type && (
-                                                <p className="text-red-500">{errors.type.message}</p>
-                                            )}
+                                            <Label>Name</Label>
+                                            <Input type="text" {...register("name")} />
+                                            {errors.name && <p className="text-red-500">{errors.name.message}</p>}
                                         </FormItem>
-                                    )}
-                                ></Controller>
-                                <Button type="submit" className="w-full" disabled={!isValid}>
-                                    Create
-                                </Button>
-                            </form>
-                        </DrawerFooter>
-                    </DrawerContent>
-                </Drawer>
+                                        <FormItem>
+                                            <Label>Slug</Label>
+                                            <Input type="text" {...register("slug")} />
+                                            {errors.slug && <p className="text-red-500">{errors.slug.message}</p>}
+                                        </FormItem>
+                                        <Controller
+                                            name="type"
+                                            control={control}
+                                            render={({ field }) => (
+                                                <FormItem>
+                                                    <Label>Taxonomy</Label>
+                                                    <Select value={field.value} onValueChange={field.onChange}>
+                                                        <SelectTrigger>
+                                                            <SelectValue placeholder="Type" />
+                                                        </SelectTrigger>
+                                                        <SelectContent>
+                                                            <SelectItem value="DEFAULT">1</SelectItem>
+                                                            <SelectItem value="SYSTEM">2</SelectItem>
+                                                        </SelectContent>
+                                                    </Select>
+                                                    {errors.type && (
+                                                        <p className="text-red-500">{errors.type.message}</p>
+                                                    )}
+                                                </FormItem>
+                                            )}
+                                        ></Controller>
+                                        <Button type="submit" className="w-full" disabled={!isValid}>
+                                            Create
+                                        </Button>
+                                    </form>
+                                </div>
+                            </div>
+                        </Drawer.Content>
+                    </Drawer.Portal>
+                </Drawer.Root>
+
             </div>
             <div className='pt-6 pb-8 flex'>
                 <DropdownMenu>
