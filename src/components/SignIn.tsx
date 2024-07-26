@@ -41,7 +41,7 @@ export const SignIn: React.FunctionComponent = () => {
 
   return (
     <div className="flex  justify-center min-h-screen bg-zinc-900 pt-32">
-      <div className="flex-1 max-w-4xl mx-auto overflow-hidden  rounded-lg shadow-xl dark:bg-gray-800">
+      <div className="flex-1 max-w-4xl mx-auto overflow-hidden  rounded-lg  dark:bg-gray-800">
         <div className="flex justify-center flex-col overflow-y-auto md:flex-row">
           <form
             onSubmit={handleSubmit(handleSignIn)}
