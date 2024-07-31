@@ -4,6 +4,7 @@ import {
     useEffect,
     useContext,
     useCallback,
+    useState,
 } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { User, firebaseAuth, getMyProfile } from "../api";
@@ -58,14 +59,15 @@ export const AuthProvider: React.FunctionComponent<PropsWithChildren> = ({
     const {
         data: myProfile,
         refetch,
-        isPending: authInitializing,
     } = useQuery({
         ...buildQueryOptions(getMyProfile),
         enabled: false,
     });
+    const [authInitializing, setAuthInitializing] = useState(false)
     useEffect(() => {
         const onAuthStateChanged = async (user: FirebaseUser | null) => {
             if (user) {
+
                 refetch();
             }
         };

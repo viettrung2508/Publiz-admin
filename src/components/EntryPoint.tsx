@@ -3,8 +3,7 @@ import { Toaster } from "react-hot-toast";
 import Sidebar from "./Sidebar";
 // import { SignIn } from "./SignIn";
 import { useAuth } from "@/contexts/AuthContext";
-// import { TanStackRouterDevtools } from '@tanstack/router-devtools'
-// import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
+
 export const EntryPoint: React.FunctionComponent = () => {
   const auth = useAuth();
   if (auth.authInitializing) {
@@ -14,15 +13,13 @@ export const EntryPoint: React.FunctionComponent = () => {
   //   return <SignIn />;
   // }
   return (
-    <div className="w-full grid grid-cols-12 bg-neutral-800">
+    <div className="w-full grid grid-cols-[300px,_1fr] bg-neutral-800">
       <Toaster />
-      <div className="col-span-2">
+      <div className="">
         <Sidebar />
       </div>
-      <div className="col-span-10">
+      <div className="">
         <Outlet />
-        {/* <TanStackRouterDevtools />
-        <ReactQueryDevtools /> */}
       </div>
 
     </div>

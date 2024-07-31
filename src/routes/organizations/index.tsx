@@ -20,7 +20,7 @@ export const Route = createFileRoute('/organizations/')({
 })
 function Organizations() {
   return (
-    <div className='text-white w-2/6 mx-auto pt-8'>
+    <div className='text-white mx-auto pt-8'>
       <div className='flex justify-between'>
         <h1>Organizations</h1>
         <Drawer direction='right'>

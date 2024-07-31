@@ -27,12 +27,38 @@ export type CreateTaxonomyInput = {
   organizationId?: number;
   userId: number;
 };
+
+export type MetaSchema = {
+  id: number;
+  name: string;
+  version: number;
+  target: string;
+  isDefault: boolean;
+  schema: any;
+  organizationId?: number;
+  createdAt: string;
+  updatedAt: string;
+};
+export type MetadataSchema = {
+  type: string;
+  required: string[];
+  properties: Record<
+    string,
+    {
+      type: string;
+      [key: string]: string;
+    }
+  >;
+};
+export const getMetaSchemas = () =>
+  publizClient.get("https://techgoda-publiz-dev.fibotree.com/api/v1/meta_schemas").json<BaseResponse<MetaSchema[]>>();
+
 export const getTaxonomies = () =>
-  publizClient.get("https://publiz-techgoda.hieutran-fu7532.workers.dev/api/v1/taxonomies").json<BaseResponse<Taxonomy[]>>();
+  publizClient.get("https://techgoda-publiz-dev.fibotree.com/api/v1/taxonomies").json<BaseResponse<Taxonomy[]>>();
 
 export const createTaxonomy = (input: CreateTaxonomyInput) => {
   return publizClient
-    .post("https://publiz-techgoda.hieutran-fu7532.workers.dev/admin/api/v1/taxonomies", { json: input })
+    .post("https://techgoda-publiz-dev.fibotree.com/api/v1/taxonomies", { json: input })
     .json<BaseResponse<Taxonomy>>();
 };
 
@@ -48,7 +74,7 @@ export type Tag = {
 };
 
 export const getTags = () =>
-  publizClient.get("https://publiz-techgoda.hieutran-fu7532.workers.dev/api/v1/tags").json<BaseResponse<Tag[]>>();
+  publizClient.get("https://techgoda-publiz-dev.fibotree.com/api/v1/tags").json<BaseResponse<Tag[]>>();
 
 
 export type CreateTagInput = {
@@ -61,7 +87,7 @@ export type CreateTagInput = {
 };
 export const createTag = (input: CreateTagInput) => {
   return publizClient
-    .post("https://publiz-techgoda.hieutran-fu7532.workers.dev/admin/api/v1/tags", { json: input })
+    .post("https://techgoda-publiz-dev.fibotree.com/api/v1/tags", { json: input })
     .json<BaseResponse<Tag>>();
 };
 export const publizClient = ky.extend({
@@ -79,7 +105,7 @@ export const publizClient = ky.extend({
 });
 
 export const getMyProfile = () =>
-  publizClient.get("https://publiz-techgoda.hieutran-fu7532.workers.dev/api/v1/users/my_profile").json<BaseResponse<User>>();
+  publizClient.get("https://techgoda-publiz-dev.fibotree.com/api/v1/users/my_profile").json<BaseResponse<User>>();
 
 
 

@@ -15,9 +15,9 @@ import {
 
 
 export default function Sidebar() {
-    return <div className=" h-screen flex justify-between flex-col bg-black text-white">
+    return <div className="flex justify-between flex-col bg-black text-white h-screen">
         <div className="ml-6 pt-4">
-            <img src="Logo.png"  className="mb-4"/>
+            <img src="Logo.png" className="mb-4" />
             <Link to='/'>
                 <div className="flex py-4">
                     <Computer className="mr-2" />

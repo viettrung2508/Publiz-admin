@@ -11,7 +11,6 @@
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
-import { Route as JokesImport } from './routes/jokes'
 import { Route as IndexImport } from './routes/index'
 import { Route as UsersIndexImport } from './routes/users/index'
 import { Route as TaxonomiesIndexImport } from './routes/taxonomies/index'
@@ -23,11 +22,6 @@ import { Route as MetaSchemasIndexImport } from './routes/meta-schemas/index'
 import { Route as FilesIndexImport } from './routes/files/index'
 
 // Create/Update Routes
-
-const JokesRoute = JokesImport.update({
-  path: '/jokes',
-  getParentRoute: () => rootRoute,
-} as any)
 
 const IndexRoute = IndexImport.update({
   path: '/',
@@ -83,13 +77,6 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexImport
-      parentRoute: typeof rootRoute
-    }
-    '/jokes': {
-      id: '/jokes'
-      path: '/jokes'
-      fullPath: '/jokes'
-      preLoaderRoute: typeof JokesImport
       parentRoute: typeof rootRoute
     }
     '/files/': {
@@ -155,7 +142,6 @@ declare module '@tanstack/react-router' {
 
 export const routeTree = rootRoute.addChildren({
   IndexRoute,
-  JokesRoute,
   FilesIndexRoute,
   MetaSchemasIndexRoute,
   OrganizationsIndexRoute,
@@ -175,7 +161,6 @@ export const routeTree = rootRoute.addChildren({
       "filePath": "__root.tsx",
       "children": [
         "/",
-        "/jokes",
         "/files/",
         "/meta-schemas/",
         "/organizations/",
@@ -188,9 +173,6 @@ export const routeTree = rootRoute.addChildren({
     },
     "/": {
       "filePath": "index.tsx"
-    },
-    "/jokes": {
-      "filePath": "jokes.tsx"
     },
     "/files/": {
       "filePath": "files/index.tsx"
