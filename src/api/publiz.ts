@@ -28,11 +28,11 @@ export type CreateTaxonomyInput = {
   userId: number;
 };
 export const getTaxonomies = () =>
-  publizClient.get("https://publiz-techgoda.hieutran-fu7532.workers.dev/api/v1/taxonomies").json<BaseResponse<Taxonomy[]>>();
+  publizClient.get("https://techgoda-publiz-dev.fibotree.com/api/v1/taxonomies").json<BaseResponse<Taxonomy[]>>();
 
 export const createTaxonomy = (input: CreateTaxonomyInput) => {
   return publizClient
-    .post("https://publiz-techgoda.hieutran-fu7532.workers.dev/admin/api/v1/taxonomies", { json: input })
+    .post("https://techgoda-publiz-dev.fibotree.com/admin/api/v1/taxonomies", { json: input })
     .json<BaseResponse<Taxonomy>>();
 };
 

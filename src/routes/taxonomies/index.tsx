@@ -36,7 +36,6 @@ type CreateTaxonomyFormSchema = z.infer<typeof createTaxonomySchema>;
 const createTaxonomySchema = z.object({
     name: z.string().min(1).max(100),
     slug: z.string().min(1).max(100),
-    // description: z.string().min(1),
     type: z.enum(["SYSTEM", "DEFAULT"]),
     organizationId: z.number(),
     userId: z.number(),
@@ -100,12 +99,7 @@ function Taxonomies() {
                                             <Input type="text" {...register("slug")} className='text-black' />
                                             {errors.slug && <p className="text-red-500">{errors.slug.message}</p>}
                                         </FormItem>
-                                        {/* <FormItem>
-                                            <Label>Description</Label>
-                                            <Textarea type="text" {...register("description")} />
-                                            {errors.description && <p className="text-red-500">{errors.description.message}</p>}
-                                        </FormItem> */}
-                                        <Button type="submit" className="w-full" disabled={!isValid}>
+                                        <Button type="submit" className="w-full" >
                                             Save
                                         </Button>
                                     </form>
