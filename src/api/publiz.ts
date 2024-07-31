@@ -105,7 +105,7 @@ export const publizClient = ky.extend({
 });
 
 export const getMyProfile = () =>
-  publizClient.get("https://techgoda-publiz-dev.fibotree.com/api/v1/users/my_profile").json<BaseResponse<User>>();
+  publizClient.get("https://techgoda-publiz-dev.fibotree.com/api/v1/users/my_profile").json<BaseResponse<User[]>>();
 
 
 
