@@ -27,6 +27,26 @@ export type CreateTaxonomyInput = {
   organizationId?: number;
   userId: number;
 };
+export type Organization = {
+  id: number;
+  name: string;
+  slug: string;
+  description: string;
+  logoUrl?: string;
+  coverUrl?: string;
+  verified: boolean;
+  ownerId: number;
+};
+export type CreateOrganizationInput = {
+  id: number;
+  name: string;
+  slug: string;
+  description: string;
+  logoUrl?: string;
+  coverUrl?: string;
+  verified: boolean;
+  ownerId: number;
+};
 
 export type MetaSchema = {
   id: number;
@@ -61,8 +81,14 @@ export const createTaxonomy = (input: CreateTaxonomyInput) => {
     .post("https://techgoda-publiz-dev.fibotree.com/api/v1/taxonomies", { json: input })
     .json<BaseResponse<Taxonomy>>();
 };
+export const getOrganization = () =>
+  publizClient.get("https://techgoda-publiz-dev.fibotree.com/api/v1/organizations").json<BaseResponse<Organization[]>>();
 
-
+export const createOrganization = (input: CreateTaxonomyInput) => {
+  return publizClient
+    .post("https://techgoda-publiz-dev.fibotree.com/api/v1/organizations", { json: input })
+    .json<BaseResponse<Organization>>();
+};
 export type Tag = {
   id: number;
   name: string;

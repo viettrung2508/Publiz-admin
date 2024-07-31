@@ -15,12 +15,20 @@ import {
 } from "@/components/ui/drawer"
 
 import { Button } from '@/components/ui/button'
+import { buildQueryOptions } from '@/lib/query'
+import { getOrganization } from '@/api'
+import { useSuspenseQuery } from '@tanstack/react-query'
 export const Route = createFileRoute('/organizations/')({
-  component: Organizations
+  component: Organizations,
+  loader: ({ context }) =>
+    context.queryClient.ensureQueryData(buildQueryOptions(getOrganization)),
 })
 function Organizations() {
+  const {
+    data: { data: organization = [] },
+  } = useSuspenseQuery(buildQueryOptions(getOrganization));
   return (
-    <div className='text-white mx-auto pt-8'>
+    <div className='text-white w-2/6 mx-auto pt-8'>
       <div className='flex justify-between'>
         <h1>Organizations</h1>
         <Drawer direction='right'>
@@ -40,27 +48,23 @@ function Organizations() {
             </DrawerFooter>
           </DrawerContent>
         </Drawer>
-
       </div>
-
       <div className='bg-gray-600 p-4 rounded-lg mt-4'>
-        <div className='flex pb-4'>
-          <div>
-            <img
-              className="h-12 w-12 rounded-full object-cover"
-              src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d7/Cristiano_Ronaldo_playing_for_Al_Nassr_FC_against_Persepolis%2C_September_2023_%28cropped%29.jpg/440px-Cristiano_Ronaldo_playing_for_Al_Nassr_FC_against_Persepolis%2C_September_2023_%28cropped%29.jpg"
-              alt="Profile"
-            />
+        {organization.map((organization) => (
+          <div key={organization.id} className='flex pb-4'>
+            <div>
+              <img
+                className="h-12 w-12 rounded-full object-cover"
+
+                alt="Profile"
+              />
+            </div>
+            <div className='pl-2'>
+              <h1 className=''>{organization.name}</h1>
+              <p>{organization.description}</p>
+            </div>
           </div>
-          <div className='pl-2'>
-            <h1 className=''>Techgoda</h1>
-            <p>Open social publish platform team</p>
-          </div>
-        </div>
-
-
-
-
+        ))}
       </div>
     </div>
   )
