@@ -118,7 +118,7 @@ function Posts() {
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
-      <div className='bg-gray-600 p-4 rounded-lg'>
+      <div className='bg-zinc-900 p-4 rounded-lg'>
         <div className='flex justify-between'>
           <div className='flex'>
             <div>

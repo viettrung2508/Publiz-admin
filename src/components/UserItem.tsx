@@ -1,6 +1,6 @@
 export default function UserItem() {
     return (
-        <div className="flex items-center">
+        <div className="flex items-center ml-4 mb-2">
             <div className="rounded-full h-12 w-12 overflow-hidden">
                 <img
                     className="h-full w-full object-cover"
