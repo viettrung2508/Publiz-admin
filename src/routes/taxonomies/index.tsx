@@ -5,8 +5,6 @@ import {
 } from "lucide-react"
 import * as React from "react"
 import { Drawer } from "vaul";
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
 import { DropdownMenuCheckboxItemProps } from "@radix-ui/react-dropdown-menu"
 import {
     DropdownMenu,
@@ -14,15 +12,10 @@ import {
     DropdownMenuContent,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { Button } from '@/components/ui/button'
-import { z } from 'zod';
-import { Input } from '@/components/ui/input';
-import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
-import { CreateTaxonomyInput, createTaxonomy, getTaxonomies } from '@/api/publiz';
-import toast from "react-hot-toast";
-import { Label } from '@/components/ui/label';
-import { FormItem } from '@/components/ui/form';
 import { buildQueryOptions } from '@/lib/query';
+import { CreateTaxonomyForm } from '@/components/taxonomy/CreateTaxonomyForm';
+import { useSuspenseQuery } from '@tanstack/react-query';
+import { getTaxonomies } from '@/api/publiz';
 
 export const Route = createFileRoute('/taxonomies/')({
     component: Taxonomies,
@@ -31,43 +24,13 @@ export const Route = createFileRoute('/taxonomies/')({
 })
 
 type Checked = DropdownMenuCheckboxItemProps["checked"]
-type CreateTaxonomyFormSchema = z.infer<typeof createTaxonomySchema>;
 
-const createTaxonomySchema = z.object({
-    name: z.string().min(1).max(100),
-    slug: z.string().min(1).max(100),
-    type: z.enum(["SYSTEM", "DEFAULT"]),
-    organizationId: z.number(),
-    userId: z.number(),
-});
+
 function Taxonomies() {
     const {
         data: { data: taxonomies = [] },
     } = useSuspenseQuery(buildQueryOptions(getTaxonomies));
-    const {
-        register,
-        handleSubmit,
-        formState: { isValid, errors },
-    } = useForm<CreateTaxonomyFormSchema>({
-        mode: "onBlur",
-        resolver: zodResolver(createTaxonomySchema),
-    });
 
-    const mutation = useMutation({
-        mutationFn: (input: CreateTaxonomyInput) => {
-            return createTaxonomy(input);
-        },
-    });
-    const onSubmit = (data: CreateTaxonomyFormSchema) =>
-        mutation.mutate(data, {
-            onSuccess: async () => {
-                toast.success("Taxonomy created");
-            },
-            onError: (errors) => {
-                console.error(errors);
-                toast.error("Tag could not be created");
-            },
-        });
     const [showDefault, setShowDefault] = React.useState<Checked>(true)
     const [showPanel, setShowPanel] = React.useState<Checked>(false)
     return (
@@ -88,21 +51,7 @@ function Taxonomies() {
                                     <Drawer.Title className="font-medium mb-4">
                                         Create a new taxonomy
                                     </Drawer.Title>
-                                    <form onSubmit={handleSubmit(onSubmit)} className="space-y-3">
-                                        <FormItem>
-                                            <Label>Name</Label>
-                                            <Input type="text" {...register("name")} className='text-black' />
-                                            {errors.name && <p className="text-red-500">{errors.name.message}</p>}
-                                        </FormItem>
-                                        <FormItem>
-                                            <Label>Slug</Label>
-                                            <Input type="text" {...register("slug")} className='text-black' />
-                                            {errors.slug && <p className="text-red-500">{errors.slug.message}</p>}
-                                        </FormItem>
-                                        <Button type="submit" className="w-full" >
-                                            Save
-                                        </Button>
-                                    </form>
+                                    <CreateTaxonomyForm />
                                 </div>
                             </div>
                         </Drawer.Content>

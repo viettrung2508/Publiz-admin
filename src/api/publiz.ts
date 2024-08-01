@@ -10,6 +10,7 @@ export type User = {
   displayName: string;
   avatarUrl?: string;
   coverUrl?: string;
+  photoUrl: string;
 };
 export type TagType = "SYSTEM" | "DEFAULT";
 export type Taxonomy = {
@@ -51,14 +52,14 @@ export type MetadataSchema = {
   >;
 };
 export const getMetaSchemas = () =>
-  publizClient.get("https://techgoda-publiz-dev.fibotree.com/api/v1/meta_schemas").json<BaseResponse<MetaSchema[]>>();
+  publizClient.get("api/v1/meta_schemas").json<BaseResponse<MetaSchema[]>>();
 
 export const getTaxonomies = () =>
-  publizClient.get("https://techgoda-publiz-dev.fibotree.com/api/v1/taxonomies").json<BaseResponse<Taxonomy[]>>();
+  publizClient.get("api/v1/taxonomies").json<BaseResponse<Taxonomy[]>>();
 
 export const createTaxonomy = (input: CreateTaxonomyInput) => {
   return publizClient
-    .post("https://techgoda-publiz-dev.fibotree.com/admin/api/v1/taxonomies", { json: input })
+    .post("admin/api/v1/taxonomies", { json: input })
     .json<BaseResponse<Taxonomy>>();
 };
 
@@ -74,7 +75,7 @@ export type Tag = {
 };
 
 export const getTags = () =>
-  publizClient.get("https://techgoda-publiz-dev.fibotree.com/api/v1/tags").json<BaseResponse<Tag[]>>();
+  publizClient.get("api/v1/tags").json<BaseResponse<Tag[]>>();
 
 
 export type CreateTagInput = {
@@ -87,7 +88,7 @@ export type CreateTagInput = {
 };
 export const createTag = (input: CreateTagInput) => {
   return publizClient
-    .post("https://techgoda-publiz-dev.fibotree.com/api/v1/tags", { json: input })
+    .post("/api/v1/tags", { json: input })
     .json<BaseResponse<Tag>>();
 };
 export const publizClient = ky.extend({
@@ -105,7 +106,7 @@ export const publizClient = ky.extend({
 });
 
 export const getMyProfile = () =>
-  publizClient.get("https://techgoda-publiz-dev.fibotree.com/api/v1/users/my_profile").json<BaseResponse<User>>();
+  publizClient.get("api/v1/users/my_profile").json<BaseResponse<User>>();
 
 
 
