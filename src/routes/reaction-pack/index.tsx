@@ -2,7 +2,6 @@ import { createFileRoute } from '@tanstack/react-router'
 import {
   Plus,
 } from "lucide-react"
-import * as React from "react"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
@@ -39,8 +38,6 @@ function ReactionPack() {
     },
   })
   function onSubmit(values: z.infer<typeof formSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
     console.log(values)
   }
 
@@ -55,9 +52,9 @@ function ReactionPack() {
             </button>
           </Drawer.Trigger>
           <Drawer.Portal>
-            <Drawer.Overlay className="fixed inset-0 bg-black/40" />
+            <Drawer.Overlay className="fixed inset-0 bg-black/70" />
             <Drawer.Content className="bg-white flex flex-col rounded-t-[10px] h-full w-[400px] mt-24 fixed bottom-0 right-0">
-              <div className="p-4 bg-white flex-1 h-full">
+              <div className="p-4 flex-1 h-full text-white bg-zinc-900">
                 <div className="max-w-md mx-auto">
                   <Drawer.Title className="font-medium mb-4">
                     Create a new reaction pack
@@ -71,7 +68,7 @@ function ReactionPack() {
                           <FormItem>
                             <FormLabel>Name</FormLabel>
                             <FormControl>
-                              <Input  {...field} />
+                              <Input  {...field} className=' bg-zinc-800 border-0' />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -84,13 +81,13 @@ function ReactionPack() {
                           <FormItem>
                             <FormLabel>Description</FormLabel>
                             <FormControl>
-                              <Textarea  {...field} />
+                              <Textarea  {...field} className='bg-zinc-800 border-0' />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
                         )}
                       />
-                      <Button type="submit">Submit</Button>
+                      <Button className='w-full bg-[#FFCE31]' type="submit">Save</Button>
                     </form>
                   </Form>
                 </div>
@@ -121,14 +118,7 @@ function ReactionPack() {
               <p className='bg-yellow-400 p-1 rounded-2xl text-xs'>story</p>
             </div>
           </div>
-
-
-
         </div>
-
-
-
-
       </div>
     </div>
   )
