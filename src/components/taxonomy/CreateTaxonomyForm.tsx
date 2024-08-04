@@ -62,7 +62,7 @@ export const CreateTaxonomyForm: React.FunctionComponent<Props> = ({
         <Input type="text" {...register("slug")} className='text-black' />
         {errors.slug && <p className="text-red-500">{errors.slug.message}</p>}
       </FormItem>
-      <Button type="submit" className="w-full" disabled={!isValid}>
+      <Button type="submit" className="w-full" disabled={!isValid} >
         Save
       </Button>
     </form>

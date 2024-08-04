@@ -24,9 +24,7 @@ export type Taxonomy = {
 export type CreateTaxonomyInput = {
   name: string;
   slug: string;
-  type: TagType;
-  organizationId?: number;
-  userId: number;
+
 };
 
 export type MetaSchema = {
@@ -60,6 +58,14 @@ export const getTaxonomies = () =>
 export const createTaxonomy = (input: CreateTaxonomyInput) => {
   return publizClient
     .post("admin/api/v1/taxonomies", { json: input })
+    .json<BaseResponse<Taxonomy>>();
+};
+export const updateTaxonomies = (
+  id: number,
+  input: CreateTaxonomyInput
+) => {
+  return publizClient
+    .put(`admin/api/v1/taxonomies/${id}`, { json: input })
     .json<BaseResponse<Taxonomy>>();
 };
 
