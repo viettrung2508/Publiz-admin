@@ -80,10 +80,6 @@ export const getTags = () =>
 export type CreateTagInput = {
   name: string;
   slug: string;
-  type: TagType;
-  organizationId?: number;
-  userId: number;
-  taxonomyId: number;
 };
 export const createTag = (input: CreateTagInput) => {
   return publizClient
