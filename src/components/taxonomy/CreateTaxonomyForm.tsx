@@ -42,6 +42,7 @@ export const CreateTaxonomyForm: React.FunctionComponent<Props> = ({
     mutation.mutate(data, {
       onSuccess: async () => {
         toast.success("Tag created");
+
       },
       onError: (errors) => {
         console.error(errors);

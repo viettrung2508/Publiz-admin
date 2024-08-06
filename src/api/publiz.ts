@@ -24,7 +24,6 @@ export type Taxonomy = {
 export type CreateTaxonomyInput = {
   name: string;
   slug: string;
-
 };
 export type Organization = {
   id: number;
