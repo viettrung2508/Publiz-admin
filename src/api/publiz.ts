@@ -24,9 +24,26 @@ export type Taxonomy = {
 export type CreateTaxonomyInput = {
   name: string;
   slug: string;
-  type: TagType;
-  organizationId?: number;
-  userId: number;
+
+};
+export type Organization = {
+  id: number;
+  name: string;
+  slug: string;
+  description: string;
+  logoUrl?: string;
+  coverUrl?: string;
+  verified: boolean;
+  ownerId: number;
+};
+export type CreateOrganizationInput = {
+  name: string;
+  slug: string;
+  description: string;
+  logoUrl?: string;
+  coverUrl?: string;
+  verified: boolean;
+  ownerId: number;
 };
 
 export type MetaSchema = {
@@ -35,7 +52,6 @@ export type MetaSchema = {
   version: number;
   target: string;
   isDefault: boolean;
-  schema: any;
   organizationId?: number;
   createdAt: string;
   updatedAt: string;
@@ -62,7 +78,31 @@ export const createTaxonomy = (input: CreateTaxonomyInput) => {
     .post("admin/api/v1/taxonomies", { json: input })
     .json<BaseResponse<Taxonomy>>();
 };
+export const getOrganization = () =>
+  publizClient.get("api/v1/organizations").json<BaseResponse<Organization[]>>();
+export const updateTaxonomies = (
+  id: number,
+  input: CreateTaxonomyInput
+) => {
+  return publizClient
+    .put(`admin/api/v1/taxonomies/${id}`, { json: input })
+    .json<BaseResponse<Taxonomy>>();
+};
 
+
+export const createOrganization = (input: CreateOrganizationInput) => {
+  return publizClient
+    .post("https://techgoda-publiz-dev.fibotree.com/api/v1/organizations", { json: input })
+    .json<BaseResponse<Organization>>();
+};
+// export const updateOrganization = (
+//   id: number,
+//   input: CreateOrganizationInput
+// ) => {
+//   return publizClient
+//     .put(`admin/api/v1/organizations/${id}`, { json: input })
+//     .json<BaseResponse<Organization>>();
+// };
 
 export type Tag = {
   id: number;
@@ -81,6 +121,10 @@ export const getTags = () =>
 export type CreateTagInput = {
   name: string;
   slug: string;
+  type: TagType;
+  organizationId?: number;
+  userId: number;
+  taxonomyId: number;
 };
 export const createTag = (input: CreateTagInput) => {
   return publizClient
