@@ -10,6 +10,7 @@ export type User = {
   displayName: string;
   avatarUrl?: string;
   coverUrl?: string;
+  photoUrl: string;
 };
 export type TagType = "SYSTEM" | "DEFAULT";
 export type Taxonomy = {
@@ -23,9 +24,25 @@ export type Taxonomy = {
 export type CreateTaxonomyInput = {
   name: string;
   slug: string;
-  type: TagType;
-  organizationId?: number;
-  userId: number;
+};
+export type Organization = {
+  id: number;
+  name: string;
+  slug: string;
+  description: string;
+  logoUrl?: string;
+  coverUrl?: string;
+  verified: boolean;
+  ownerId: number;
+};
+export type CreateOrganizationInput = {
+  name: string;
+  slug: string;
+  description: string;
+  logoUrl?: string;
+  coverUrl?: string;
+  verified: boolean;
+  ownerId: number;
 };
 
 export type MetaSchema = {
@@ -34,7 +51,6 @@ export type MetaSchema = {
   version: number;
   target: string;
   isDefault: boolean;
-  schema: any;
   organizationId?: number;
   createdAt: string;
   updatedAt: string;
@@ -51,17 +67,41 @@ export type MetadataSchema = {
   >;
 };
 export const getMetaSchemas = () =>
-  publizClient.get("https://techgoda-publiz-dev.fibotree.com/api/v1/meta_schemas").json<BaseResponse<MetaSchema[]>>();
+  publizClient.get("api/v1/meta_schemas").json<BaseResponse<MetaSchema[]>>();
 
 export const getTaxonomies = () =>
-  publizClient.get("https://techgoda-publiz-dev.fibotree.com/api/v1/taxonomies").json<BaseResponse<Taxonomy[]>>();
+  publizClient.get("api/v1/taxonomies").json<BaseResponse<Taxonomy[]>>();
 
 export const createTaxonomy = (input: CreateTaxonomyInput) => {
   return publizClient
-    .post("https://techgoda-publiz-dev.fibotree.com/api/v1/taxonomies", { json: input })
+    .post("admin/api/v1/taxonomies", { json: input })
+    .json<BaseResponse<Taxonomy>>();
+};
+export const getOrganization = () =>
+  publizClient.get("api/v1/organizations").json<BaseResponse<Organization[]>>();
+export const updateTaxonomies = (
+  id: number,
+  input: CreateTaxonomyInput
+) => {
+  return publizClient
+    .put(`admin/api/v1/taxonomies/${id}`, { json: input })
     .json<BaseResponse<Taxonomy>>();
 };
 
+
+export const createOrganization = (input: CreateOrganizationInput) => {
+  return publizClient
+    .post("https://techgoda-publiz-dev.fibotree.com/api/v1/organizations", { json: input })
+    .json<BaseResponse<Organization>>();
+};
+// export const updateOrganization = (
+//   id: number,
+//   input: CreateOrganizationInput
+// ) => {
+//   return publizClient
+//     .put(`admin/api/v1/organizations/${id}`, { json: input })
+//     .json<BaseResponse<Organization>>();
+// };
 
 export type Tag = {
   id: number;
@@ -74,7 +114,7 @@ export type Tag = {
 };
 
 export const getTags = () =>
-  publizClient.get("https://techgoda-publiz-dev.fibotree.com/api/v1/tags").json<BaseResponse<Tag[]>>();
+  publizClient.get("api/v1/tags").json<BaseResponse<Tag[]>>();
 
 
 export type CreateTagInput = {
@@ -83,7 +123,7 @@ export type CreateTagInput = {
 };
 export const createTag = (input: CreateTagInput) => {
   return publizClient
-    .post("https://techgoda-publiz-dev.fibotree.com/api/v1/tags", { json: input })
+    .post("/api/v1/tags", { json: input })
     .json<BaseResponse<Tag>>();
 };
 export const publizClient = ky.extend({
@@ -101,7 +141,7 @@ export const publizClient = ky.extend({
 });
 
 export const getMyProfile = () =>
-  publizClient.get("https://techgoda-publiz-dev.fibotree.com/api/v1/users/my_profile").json<BaseResponse<User[]>>();
+  publizClient.get("api/v1/users/my_profile").json<BaseResponse<User>>();
 
 
 
