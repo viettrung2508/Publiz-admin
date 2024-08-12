@@ -46,11 +46,15 @@ function Organizations() {
         {organization.map((organization) => (
           <div key={organization.id} className='flex pb-4'>
             <div>
-              <img
-                className="h-12 w-12 rounded-full object-cover"
-
-                alt="Profile"
-              />
+              {organization.metadata && organization.metadata.avatar ? (
+                <img
+                  src={organization.metadata.avatar.src}
+                  className="h-12 w-12 rounded-full object-cover"
+                  alt={organization.name}
+                />
+              ) : (
+                <div className="h-12 w-12 rounded-full bg-gray-300"></div>
+              )}
             </div>
             <div className='pl-2'>
               <h1 className=''>{organization.name}</h1>

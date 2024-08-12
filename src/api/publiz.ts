@@ -30,20 +30,32 @@ export type Organization = {
   name: string;
   slug: string;
   description: string;
-  logoUrl?: string;
-  coverUrl?: string;
+  metadata: {
+    email: string,
+    phone: string,
+    cover?: {
+      src: string;
+    } | null;
+    avatar?: {
+      src: string;
+    } | null;
+    website: string,
+    metaSchemaId: number,
+  };
+
   verified: boolean;
   ownerId: number;
 };
 export type CreateOrganizationInput = {
   name: string;
-  slug: string;
   description: string;
-  logoUrl?: string;
-  coverUrl?: string;
-  verified: boolean;
-  ownerId: number;
+  // metadata: {
+  //   avatar?: {
+  //     src: string;
+  //   } | null;
+  // };
 };
+export type MetaType = "SYSTEM" | "DEFAULT";
 
 export type MetaSchema = {
   id: number;
@@ -51,7 +63,28 @@ export type MetaSchema = {
   version: number;
   target: string;
   isDefault: boolean;
+  type: MetaType;
   organizationId?: number;
+  schema: {
+    type: string;
+    properties: {
+      excerpt: {
+        type: string;
+        maxLength: number;
+      };
+      featuredImage: {
+        type: string;
+        properties: {
+          src: {
+            type: string;
+          }
+        }
+        additionalProperties: boolean;
+      }
+
+    }
+    additionalProperties: boolean
+  }
   createdAt: string;
   updatedAt: string;
 };

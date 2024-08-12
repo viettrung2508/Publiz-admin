@@ -3,7 +3,6 @@ import {
   Plus,
   ChevronDown,
   Dot,
-  CircleX
 } from "lucide-react"
 import * as React from "react"
 import { Drawer } from "vaul";
@@ -23,17 +22,31 @@ import { Select } from '@radix-ui/react-select';
 import { SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { useState } from 'react';
+import { buildQueryOptions } from '@/lib/query';
+import { MetaSchema, getMetaSchemas } from '@/api';
+import { useSuspenseQuery } from '@tanstack/react-query';
 export const Route = createFileRoute('/meta-schemas/')({
-  component: MetaSchemas
+  component: MetaSchemas,
+  loader: ({ context }) =>
+    context.queryClient.ensureQueryData(buildQueryOptions(getMetaSchemas)),
 })
 type Checked = DropdownMenuCheckboxItemProps["checked"]
 
 function MetaSchemas() {
+  const {
+    data: { data: metaSchema = [] },
+  } = useSuspenseQuery(buildQueryOptions(getMetaSchemas));
   const [schemas, setSchemas] = useState<object[]>([]);
 
   const addSchema = () => {
     setSchemas([...schemas, {}]);
   };
+
+
+  const groupByTarget = metaSchema.reduce<{ [key: string]: MetaSchema[] }>((targ, item) => {
+    (targ[item.target] = targ[item.target] || []).push(item);
+    return targ;
+  }, {})
   const [showStatusBar, setShowStatusBar] = React.useState<Checked>(true)
   const [showActivityBar, setShowActivityBar] = React.useState<Checked>(false)
   const [showPanel, setShowPanel] = React.useState<Checked>(false)
@@ -210,63 +223,25 @@ function MetaSchemas() {
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
-      <h1 className='uppercase text-xl pb-2'>Post</h1>
-      <div className='bg-gray-600 p-4 rounded-lg'>
-        <div className='flex justify-between pb-4'>
-          <div>
-            <div>
-              <h1 className='pb-2'>blog</h1>
-              <p>Version: 0.0.2 Type: System</p>
-            </div>
-            <div>
-              <h1 className='pb-2'>story</h1>
-              <p>Version: 0.0.2 Type: System</p>
-            </div>
-            <div>
-              <h1 className='pb-2'>devfeed</h1>
-              <p>Version: 0.0.2 Type: System</p>
-            </div>
-          </div>
-          <div>
-            <p className='bg-yellow-400 p-1 rounded-2xl text-xs'>default</p>
+      {Object.entries(groupByTarget).map(([target, metas]) => (
+        <div key={target} className=''>
+          <h1 className='uppercase text-xl pb-4'>{target}</h1>
+          <div className='bg-gray-700 p-4 rounded-lg mb-6 '>
+            {metas.map((meta) => (
+              <div key={meta.id}>
+                <div className='flex flex-col pb-4'>
+                  <div>
+                    <h1 className='pb-2'>{meta.name}</h1>
+                    <p>Version: {meta.version} Type: System</p>
+                  </div>
+                </div>
+              </div>
+            ))}
+            <p className='bg-yellow-400  rounded-2xl text-xs'>default</p>
           </div>
         </div>
+      ))}
 
-      </div>
-      <h1 className='uppercase text-xl pb-2 pt-4'>User</h1>
-      <div className='bg-gray-600 p-4 rounded-lg'>
-        <div className='flex justify-between pb-4'>
-          <div>
-            <div>
-              <h1 className='pb-2'>user-profile</h1>
-              <p>Version: 0.0.2 Type: System</p>
-            </div>
-          </div>
-          <div>
-            <p className='bg-yellow-400 p-1 rounded-2xl text-xs'>default</p>
-          </div>
-        </div>
-
-      </div>
-      <h1 className='uppercase text-xl pb-2 pt-4'>Comment</h1>
-      <div className='bg-gray-600 p-4 rounded-lg'>
-        <div className='flex justify-between pb-4'>
-          <div>
-            <div>
-              <h1 className='pb-2'>standard-comment</h1>
-              <p>Version: 0.0.2 Type: System</p>
-            </div>
-            <div>
-              <h1 className='pb-2'>organization-opening-request</h1>
-              <p>Version: 0.0.2 Type: System</p>
-            </div>
-          </div>
-          <div>
-            <p className='bg-yellow-400 p-1 rounded-2xl text-xs'>default</p>
-          </div>
-        </div>
-
-      </div>
 
     </div>
   )

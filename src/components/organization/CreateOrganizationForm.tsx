@@ -31,10 +31,7 @@ export const CreateOrganizationForm: React.FunctionComponent<Props> = ({
     resolver: zodResolver(createOrganizationSchema),
     defaultValues: {
       name: organization?.name || "",
-      slug: organization?.slug || "",
-      verified: organization?.verified || false,
       description: organization?.description || "",
-      ownerId: organization?.ownerId || 0,
     },
   });
 
@@ -59,7 +56,8 @@ export const CreateOrganizationForm: React.FunctionComponent<Props> = ({
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-3">
       <div className="w-[144px] mx-auto ">
         <img className="w-[144px] h-[144px] mb-2 rounded " />
-        <Input className="bg-zinc-800 border-0" type="file"></Input>
+        <Input className="bg-zinc-800 border-0 " type="file"></Input>
+
       </div>
       <FormItem>
         <Label>Name</Label>
